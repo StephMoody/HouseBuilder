@@ -8,6 +8,7 @@ namespace HouseBuilder
         {
             Console.WriteLine("Drawing house...");
             HouseDrawer.DrawHouse(4,20);
+            // OriginalHouseBuilder.CertainlyNotMain(null);
         }
     }
 }
