@@ -1,4 +1,4 @@
-﻿namespace HouseBuilder.Model;
+﻿namespace HouseBuilder.Model.Common;
 
 public static class HouseElements
 {

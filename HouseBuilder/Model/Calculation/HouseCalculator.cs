@@ -1,19 +1,23 @@
-﻿namespace HouseBuilder.Model;
+﻿using HouseBuilder.Model.Common;
 
-internal static class HouseCalculator
+namespace HouseBuilder.Model.Calculation;
+
+internal class HouseCalculator
 {
-    internal static int CalculateActualWidth(int requestedWidth)
+    private const int MIN_WIDTH = 4;
+
+    internal int CalculateActualWidth(int requestedWidth)
     {
         if (requestedWidth % 2 != 0)
             requestedWidth++;
-        if (requestedWidth < 4)
-            requestedWidth = 4;
+        if (requestedWidth < MIN_WIDTH)
+            requestedWidth = MIN_WIDTH;
         return requestedWidth;
     }
 
-    internal static List<RoomData> CalculateRooms(int stories, int width)
+    internal List<RoomData> CalculateRooms(int stories, int width)
     {
-        List<RoomData> rooms = new List<RoomData>();
+        List<RoomData> rooms = new();
         for (int storyIndex = stories - 1; storyIndex >= 0; storyIndex--)
         {
             Random random = Random.Shared;
@@ -34,7 +38,7 @@ internal static class HouseCalculator
         return rooms;
     }
     
-    internal static string CalculateSpacesForStory(int stories, int width, List<RoomData> rooms, int currentStoryIndex)
+    internal string CalculateSpacesForStory(int stories, int width, List<RoomData> rooms, int currentStoryIndex)
     {
         Random random = new();
         string spaces = "";
