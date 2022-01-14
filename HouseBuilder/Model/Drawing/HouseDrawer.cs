@@ -34,10 +34,7 @@ public class HouseDrawer
         if (baseFloorReached)
         {
             Console.Write(HouseElements.LOWER_CORNER_LEFT);
-            for (int xIndex = 0; xIndex < width - 2; xIndex++)
-            {
-                DrawRooms(rooms, currentStoryIndex, xIndex);
-            }
+            DrawRooms(width, rooms, currentStoryIndex);
 
             Console.WriteLine(HouseElements.LOWER_CORNER_RIGHT);
         }
@@ -46,42 +43,9 @@ public class HouseDrawer
             return;
         
         Console.Write(HouseElements.TEE_VERTICAL_LEFT);
-        for (int xIndex = 0; xIndex < width - 2; xIndex++)
-        {
-            DrawRooms(rooms, currentStoryIndex, xIndex);
-        }
+        DrawRooms(width, rooms, currentStoryIndex);
 
         Console.WriteLine(HouseElements.TEE_VERTICAL_RIGHT);
-    }
-
-    private void DrawRooms(List<RoomData> rooms, int currentStoryIndex, int xIndex)
-    {
-        bool hasRoomNextRightOnNextStory = rooms.Contains(new RoomData(currentStoryIndex + 1, xIndex + 1));
-        bool hasRoomNextRightOnCurrentStory = rooms.Contains(new RoomData(currentStoryIndex, xIndex + 1));
-
-        if (hasRoomNextRightOnCurrentStory &&
-            !hasRoomNextRightOnNextStory)
-        {
-            Console.Write(HouseElements.TEE_HORIZONTAL_LOWER);
-        }
-
-        if (hasRoomNextRightOnCurrentStory &&
-            hasRoomNextRightOnNextStory)
-        {
-            Console.Write(HouseElements.CROSS);
-        }
-
-        if (!hasRoomNextRightOnCurrentStory &&
-            hasRoomNextRightOnNextStory)
-        {
-            Console.Write(HouseElements.TEE_HORIZONTAL_UPPER);
-        }
-
-        if (!hasRoomNextRightOnCurrentStory &&
-            !hasRoomNextRightOnNextStory)
-        {
-            Console.Write(HouseElements.HORIZONTAL);
-        }
     }
     
     private void DrawCeiling(int stories, int width, List<RoomData> rooms)
@@ -90,11 +54,17 @@ public class HouseDrawer
             return;
         
         Console.Write(HouseElements.TEE_VERTICAL_LEFT);
-        int ceilingStoryIndex = -1;
+        DrawRooms(width,rooms,-1);
+
+        Console.WriteLine(HouseElements.TEE_VERTICAL_RIGHT);
+    }
+    
+    private void DrawRooms(int width, List<RoomData> rooms, int currentStoryIndex)
+    {
         for (int horizontalIndex = 0; horizontalIndex < width - 2; horizontalIndex++)
         {
-            bool storyBelowHasWall = rooms.Contains(new RoomData(ceilingStoryIndex + 1, horizontalIndex + 1));
-            bool hasRoomNextRightOnCurrentStory = rooms.Contains(new RoomData(ceilingStoryIndex, horizontalIndex + 1));
+            bool storyBelowHasWall = rooms.Contains(new RoomData(currentStoryIndex + 1, horizontalIndex + 1));
+            bool hasRoomNextRightOnCurrentStory = rooms.Contains(new RoomData(currentStoryIndex, horizontalIndex + 1));
             if (hasRoomNextRightOnCurrentStory && !storyBelowHasWall)
             {
                 Console.Write(HouseElements.TEE_HORIZONTAL_LOWER);
@@ -115,7 +85,5 @@ public class HouseDrawer
                 Console.Write(HouseElements.HORIZONTAL);
             }
         }
-
-        Console.WriteLine(HouseElements.TEE_VERTICAL_RIGHT);
     }
 }
