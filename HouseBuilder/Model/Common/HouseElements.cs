@@ -13,4 +13,6 @@ public static class HouseElements
     internal const string CROSS = "┼";
     internal const string WINDOW = "■";
     internal const string DOOR = "▐";
+    internal const string SPACE = " ";
+
 }

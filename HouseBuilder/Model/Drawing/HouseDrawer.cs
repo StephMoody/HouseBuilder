@@ -11,7 +11,7 @@ public class HouseDrawer
     internal void DrawHouse(int stories, int requestedWidth)
     {
         int actualWidth = _houseCalculator.CalculateActualWidth(requestedWidth);
-        List<RoomData> rooms = _houseCalculator.CalculateRooms(stories, requestedWidth);
+        List<RoomData> rooms = _houseCalculator.GetAllRoomData(stories, requestedWidth);
 
         _roofDrawer.DrawRoof(actualWidth);
         DrawCeiling(stories, requestedWidth, rooms);
@@ -22,9 +22,54 @@ public class HouseDrawer
     {
         for (int currentStoryIndex = 0; currentStoryIndex < stories; currentStoryIndex++)
         {
-            string spaces = _houseCalculator.CalculateSpacesForStory(stories, width, rooms, currentStoryIndex);
+            string spaces = DrawWindows(stories, width, rooms, currentStoryIndex);
             DrawStory(stories, width, rooms, spaces, currentStoryIndex);
         }
+    }
+    
+    private string DrawWindows(int stories, int width, List<RoomData> rooms, int currentStoryIndex)
+    {
+        Random random = new();
+        string spaces = "";
+        bool doorIsPlaced = false;
+        bool windowIsPlaced = false; //BUGFIX: Windows too close to each other
+        for (int currentRoomIndex = 0; currentRoomIndex < width - 2; currentRoomIndex++)
+        {
+            if (rooms.Any(x => x.StoryIndex == currentStoryIndex && x.HorizontalIndex == currentRoomIndex + 1))
+            {
+                spaces += HouseElements.VERTICAL;
+                windowIsPlaced = false;
+                continue;
+            }
+
+            bool isFirstFloor = currentStoryIndex == stories - 1;
+            if (isFirstFloor)
+            {
+                if (random.NextDouble() < 0.5 &&
+                    !doorIsPlaced) //BUGFIX: House had no door. If still no door, adjust number.
+                {
+                    spaces += HouseElements.DOOR;
+                    doorIsPlaced = true;
+                }
+                else
+                    spaces += HouseElements.SPACE;
+            }
+            else
+            {
+                if (random.NextDouble() < 0.25 && !windowIsPlaced)
+                {
+                    spaces += HouseElements.WINDOW;
+                    windowIsPlaced = true;
+                }
+                else
+                {
+                    spaces += HouseElements.SPACE;
+                    windowIsPlaced = false;
+                }
+            }
+        }
+
+        return spaces;
     }
     
     private void DrawStory(int stories, int width, List<RoomData> rooms, string spaces, int currentStoryIndex)

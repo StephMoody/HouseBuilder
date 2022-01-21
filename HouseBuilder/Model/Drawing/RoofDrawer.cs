@@ -1,10 +1,10 @@
 ﻿using System.Text;
+using HouseBuilder.Model.Common;
 
 namespace HouseBuilder.Model.Drawing;
 
 public class RoofDrawer
 {
-    private const string SPACE = " ";
     private const string LEFT_ROOF = "/";
     private const string RIGHT_ROOF = "\\";
 
@@ -43,12 +43,12 @@ public class RoofDrawer
         if (isInside)
         {
             for (int xIndex = 0; xIndex < (width / 2 - roofHeight) * 2 - 2; xIndex++)
-                sb.Append(SPACE);
+                sb.Append(HouseElements.SPACE);
         }
         else
         {
             for (int xIndex = 0; xIndex < roofHeight; xIndex++)
-                sb.Append(SPACE);
+                sb.Append(HouseElements.SPACE);
         }
     }
 }

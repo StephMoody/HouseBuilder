@@ -15,70 +15,36 @@ internal class HouseCalculator
         return requestedWidth;
     }
 
-    internal List<RoomData> CalculateRooms(int stories, int width)
+    internal List<RoomData> GetAllRoomData(int stories, int width)
     {
         List<RoomData> rooms = new();
         for (int storyIndex = stories - 1; storyIndex >= 0; storyIndex--)
         {
-            Random random = Random.Shared;
-            int targetRoomCount = random.Next(0, (width - 2) / 3 + 1);
-            for (int horizontalIndex = 0; horizontalIndex < targetRoomCount; horizontalIndex++)
-            {
-                int roomHorizontalIndex;
-                do
-                {
-                    roomHorizontalIndex = random.Next(2, width - 2);
-                } 
-                while (rooms.Where(x => x.StoryIndex == storyIndex).Where(x => x.HorizontalIndex == roomHorizontalIndex)
-                           .Concat(rooms.Where(x => x.StoryIndex == storyIndex && Math.Abs(x.HorizontalIndex - roomHorizontalIndex) <= 1)).Count() != 0);
-                rooms.Add(new RoomData(storyIndex, roomHorizontalIndex));
-            }
+            GetRoomDataPerStory(width, rooms, storyIndex);
         }
 
         return rooms;
     }
-    
-    internal string CalculateSpacesForStory(int stories, int width, List<RoomData> rooms, int currentStoryIndex)
+
+    private void GetRoomDataPerStory(int width, List<RoomData> rooms, int storyIndex)
     {
-        Random random = new();
-        string spaces = "";
-        bool doorIsPlaced = false;
-        bool windowIsPlaced = false; //BUGFIX: Windows too close to each other
-        for (int currentRoomIndex = 0; currentRoomIndex < width - 2; currentRoomIndex++)
+        Random random = Random.Shared;
+        int targetRoomCount = random.Next(0, (width - 2) / 3 + 1);
+        for (int horizontalIndex = 0; horizontalIndex < targetRoomCount; horizontalIndex++)
         {
-            if (rooms.Any(x => x.StoryIndex == currentStoryIndex && x.HorizontalIndex == currentRoomIndex + 1))
-            {
-                spaces += HouseElements.VERTICAL;
-                windowIsPlaced = false;
-                continue;
-            }
-
-            if (currentStoryIndex == stories - 1)
-            {
-                if (random.NextDouble() < 0.5 &&
-                    !doorIsPlaced) //BUGFIX: House had no door. If still no door, adjust number.
-                {
-                    spaces += HouseElements.DOOR;
-                    doorIsPlaced = true;
-                }
-                else
-                    spaces += " ";
-            }
-            else
-            {
-                if (random.NextDouble() < 0.25 && !windowIsPlaced)
-                {
-                    spaces += HouseElements.WINDOW;
-                    windowIsPlaced = true;
-                }
-                else
-                {
-                    spaces += " ";
-                    windowIsPlaced = false;
-                }
-            }
+            GetSingleRoomData(width, rooms, storyIndex, random);
         }
+    }
 
-        return spaces;
+    private void GetSingleRoomData(int width, List<RoomData> rooms, int storyIndex, Random random)
+    {
+        int roomHorizontalIndex;
+        do
+        {
+            roomHorizontalIndex = random.Next(2, width - 2);
+        } 
+        while (rooms.Any(x => x.StoryIndex == storyIndex && ( x.HorizontalIndex == roomHorizontalIndex || Math.Abs(x.HorizontalIndex - roomHorizontalIndex) <= 1)));
+
+        rooms.Add(new RoomData(storyIndex, roomHorizontalIndex));
     }
 }
